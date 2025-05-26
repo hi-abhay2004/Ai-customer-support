@@ -1,17 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
-import { Badge } from '../badge';
+import { Badge } from "../badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { UserPlus, Edit, UserMinus, Mail, User } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "../dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "../dialog";
 import { Input } from "../input";
-import Sidebar from '../sidebar/page';
+import Sidebar from "../sidebar/page";
 
 const AgentManagementSection = () => {
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+
   const [agents, setAgents] = useState([
     {
       id: 1,
@@ -20,7 +31,7 @@ const AgentManagementSection = () => {
       role: "Senior Agent",
       status: "Online",
       lastActive: "2 min ago",
-      ticketsHandled: 45
+      ticketsHandled: 45,
     },
     {
       id: 2,
@@ -29,7 +40,7 @@ const AgentManagementSection = () => {
       role: "Agent",
       status: "Away",
       lastActive: "15 min ago",
-      ticketsHandled: 32
+      ticketsHandled: 32,
     },
     {
       id: 3,
@@ -38,7 +49,7 @@ const AgentManagementSection = () => {
       role: "Team Lead",
       status: "Online",
       lastActive: "1 min ago",
-      ticketsHandled: 67
+      ticketsHandled: 67,
     },
     {
       id: 4,
@@ -47,8 +58,8 @@ const AgentManagementSection = () => {
       role: "Agent",
       status: "Offline",
       lastActive: "2 hours ago",
-      ticketsHandled: 28
-    }
+      ticketsHandled: 28,
+    },
   ]);
 
   const getStatusBadge = (status) => {
@@ -92,60 +103,82 @@ const AgentManagementSection = () => {
             <h2 className="text-xl font-semibold text-gray-900">Agent Management</h2>
             <p className="text-gray-600">Manage your support team members and their roles</p>
           </div>
-          <Dialog>
-            <DialogTrigger asChild onClick={() => setDialogOpen(true)}>
-              <button
-                type="button"
-                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add New Agent
-              </button>
-            </DialogTrigger>
+          <div className="flex space-x-3">
+            <Dialog>
+              <DialogTrigger asChild onClick={() => setDialogOpen(true)}>
+                <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add New Agent
+                </button>
+              </DialogTrigger>
 
-            {dialogOpen && (
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Agent</DialogTitle>
-                  <DialogDescription>
-                    Invite a new team member to join your support team
-                  </DialogDescription>
-                </DialogHeader>
+              {dialogOpen && (
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Agent</DialogTitle>
+                    <DialogDescription>
+                      Invite a new team member to join your support team
+                    </DialogDescription>
+                  </DialogHeader>
 
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block mb-1 font-medium text-gray-700">Full Name</label>
-                    <Input id="name" placeholder="Enter agent's full name" />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block mb-1 font-medium text-gray-700">Email Address</label>
-                    <Input id="email" type="email" placeholder="agent@company.com" />
-                  </div>
-                  <div>
-                    <label htmlFor="role" className="block mb-1 font-medium text-gray-700">Role</label>
-                    <select className="w-full border rounded-md px-3 py-2">
-                      <option>Agent</option>
-                      <option>Senior Agent</option>
-                      <option>Team Lead</option>
-                    </select>
-                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block mb-1 font-medium text-gray-700">
+                        Full Name
+                      </label>
+                      <Input id="name" placeholder="Enter agent's full name" />
+                    </div>
 
-                  <button
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                    onClick={() => setDialogOpen(false)}
-                  >
-                    Send Invitation
-                  </button>
+                    <div>
+                      <label htmlFor="email" className="block mb-1 font-medium text-gray-700">
+                        Email Address
+                      </label>
+                      <Input id="email" type="email" placeholder="agent@company.com" />
+                    </div>
 
-                  <DialogClose onClick={() => setDialogOpen(false)}>
-                    <button className="mt-2 w-full text-center text-sm text-gray-500 hover:underline">
-                      Cancel
+                    <div>
+                      <label htmlFor="password" className="block mb-1 font-medium text-gray-700">
+                        Password
+                      </label>
+                      <Input id="password" type="password" placeholder="Enter password" />
+                    </div>
+
+                    <div>
+                      <label htmlFor="role" className="block mb-1 font-medium text-gray-700">
+                        Role
+                      </label>
+                      <select className="w-full border rounded-md px-3 py-2">
+                        <option>Agent</option>
+                        <option>Senior Agent</option>
+                        <option>Team Lead</option>
+                      </select>
+                    </div>
+
+                    <button
+                      className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                      onClick={() => setDialogOpen(false)}
+                    >
+                      Send Invitation
                     </button>
-                  </DialogClose>
-                </div>
-              </DialogContent>
-            )}
-          </Dialog>
+
+                    <DialogClose onClick={() => setDialogOpen(false)}>
+                      <button className="mt-2 w-full text-center text-sm text-gray-500 hover:underline">
+                        Cancel
+                      </button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              )}
+            </Dialog>
+
+            {/* Go to Agent Panel Button */}
+            <button
+              onClick={() => router.push("/pages/dashboard")}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded"
+            >
+              Go to Agent Panel
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -167,7 +200,7 @@ const AgentManagementSection = () => {
                 <div>
                   <p className="text-sm text-gray-600">Online Now</p>
                   <p className="text-2xl font-bold text-green-600">
-                    {agents.filter(a => a.status === 'Online').length}
+                    {agents.filter((a) => a.status === "Online").length}
                   </p>
                 </div>
                 <div className="h-8 w-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -182,7 +215,7 @@ const AgentManagementSection = () => {
                 <div>
                   <p className="text-sm text-gray-600">Team Leads</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {agents.filter(a => a.role === 'Team Lead').length}
+                    {agents.filter((a) => a.role === "Team Lead").length}
                   </p>
                 </div>
                 <div className="h-8 w-8 bg-purple-500 rounded-full flex items-center justify-center">
@@ -232,7 +265,7 @@ const AgentManagementSection = () => {
                         <Avatar>
                           <AvatarImage src="/placeholder.svg" />
                           <AvatarFallback>
-                            {agent.name.split(' ').map(n => n[0]).join('')}
+                            {agent.name.split(" ").map((n) => n[0]).join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div>
