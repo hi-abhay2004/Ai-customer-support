@@ -1,126 +1,150 @@
-"use client"
-
-
-import { useState } from 'react';
+"use client";
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
-// import { button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Badge } from "../badge";
-import { Upload, Eye, Trash2, RefreshCw, FileText, File } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "../dialog";
-import { Input } from "../input";
-// import { label } from "";
-import Sidebar from '../sidebar/page';
+import { FileText, File } from "lucide-react";
 import FileUpload from './file_upload';
 
-import { useEffect } from 'react';
+const BASE_URL = "http://192.168.39.76:8000/support"; // Update if needed
+
 const KnowledgeBaseSection = () => {
-    const [open, setOpen] = useState(false);
-    const [documents, setDocuments] = useState([]);
-    const [error, setError] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [error, setError] = useState(null);
 
-    // Fetch uploaded files from backend
-    useEffect(() => {
-        async function fetchDocuments() {
-            try {
-                const BASE_URL = "http://192.168.39.76:8000/support";
-                const res = await fetch(`${BASE_URL}/uploaded-files/`);
-                if (!res.ok) throw new Error("Failed to fetch documents");
-                const data = await res.json();
-                // Only show file name, set other fields blank or default
-                const docs = data.map((doc) => ({
-                    id: doc.id,
-                    name: doc.filename || doc.name || "Unknown",
-                    type: "",
-                    uploadDate: doc.upload_date ? new Date(doc.upload_date).toISOString().split("T")[0] : "",
-                    status: doc.status || "",
-                    size: doc.size_bytes ? (doc.size_bytes / (1024 * 1024)).toFixed(2) + " MB" : ""
-                }));
-                setDocuments(docs);
-            } catch (err) {
-                setError(err.message);
-            }
+  const loadDocuments = async () => {
+    try {
+      setError(null);
+
+      // Fetch from backend
+      const res = await fetch(`${BASE_URL}/uploaded-files/`);
+      const data = await res.ok ? await res.json() : [];
+
+      const backendDocs = data.map(doc => ({
+        id: doc.id,
+        name: doc.filename || doc.name || "Unknown",
+        type: "",
+        uploadDate: doc.upload_date ? new Date(doc.upload_date).toISOString().split("T")[0] : "",
+        status: doc.status || "",
+        size: doc.size_bytes ? (doc.size_bytes / (1024 * 1024)).toFixed(2) + " MB" : "",
+      }));
+
+      // Fetch from localStorage
+      const localFiles = JSON.parse(localStorage.getItem("uploadedFiles") || "[]");
+
+      // Merge backend + local files, avoiding duplicates by file name
+      const fileMap = new Map();
+      backendDocs.forEach(file => fileMap.set(file.name, file));
+      localFiles.forEach(file => {
+        if (!fileMap.has(file.name)) {
+          fileMap.set(file.name, file);
         }
-        fetchDocuments();
-    }, []);
+      });
 
-    const getStatusBadge = (status) => {
-        switch (status) {
-            case "Embedded":
-                return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Embedded</Badge>;
-            case "Processing":
-                return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Processing</Badge>;
-            case "Failed":
-                return <Badge variant="destructive">Failed</Badge>;
-            default:
-                return <Badge variant="secondary">{status}</Badge>;
-        }
-    };
+      const merged = Array.from(fileMap.values());
+      setDocuments(merged);
+    } catch (err) {
+      setError(err.message || "Failed to load documents.");
+    }
+  };
 
-    const getFileIcon = (filename) => {
-        if (filename.endsWith('.pdf')) {
-            return <FileText className="h-4 w-4 text-red-500" />;
-        }
-        return <File className="h-4 w-4 text-blue-500" />;
-    };
+  useEffect(() => {
+    loadDocuments();
+  }, []);
 
-    // Example: companyId could be fetched from context or props
-    const companyId = 1; // TODO: Replace with actual company selection
-    return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Knowledge Base Documents</h2>
-                    <p className="text-gray-600">Manage your AI training documents and knowledge base</p>
-                </div>
-            </div>
-            <FileUpload companyId={companyId} onUpload={() => {/* Optionally refresh docs */}} />
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Embedded":
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Embedded</Badge>;
+      case "Processing":
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Processing</Badge>;
+      case "Failed":
+        return <Badge variant="destructive">Failed</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600">Total Documents</p>
-                                <p className="text-2xl font-bold text-gray-900">{documents.length}</p>
-                            </div>
-                            <FileText className="h-8 w-8 text-blue-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+  const getFileIcon = (filename) => {
+    if (filename.endsWith('.pdf')) return <FileText className="h-4 w-4 text-red-500" />;
+    return <File className="h-4 w-4 text-blue-500" />;
+  };
 
-            {/* Documents Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Document Library</CardTitle>
-                    <CardDescription>All uploaded documents</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Document</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {documents.map((doc) => (
-                                <TableRow key={doc.id}>
-                                    <TableCell>
-                                        <div className="flex items-center space-x-2">
-                                            {doc.name}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+  const handleUploadComplete = () => {
+    loadDocuments(); // refresh after upload
+  };
+
+  const companyId = 1;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">Knowledge Base Documents</h2>
+          <p className="text-gray-600">Manage your AI training documents and knowledge base</p>
         </div>
-    );
+      </div>
+
+      <FileUpload companyId={companyId} onUpload={handleUploadComplete} />
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Documents</p>
+                <p className="text-2xl font-bold text-gray-900">{documents.length}</p>
+              </div>
+              <FileText className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Documents Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Document Library</CardTitle>
+          <CardDescription>All uploaded documents</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {error && (
+            <div className="text-red-600 font-medium mb-2">Error: {error}</div>
+          )}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Document</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Upload Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Size</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {documents.map((doc) => (
+                <TableRow key={doc.id}>
+                  <TableCell className="flex items-center gap-2">{getFileIcon(doc.name)} {doc.name}</TableCell>
+                  <TableCell>{doc.type || "-"}</TableCell>
+                  <TableCell>{doc.uploadDate}</TableCell>
+                  <TableCell>{getStatusBadge(doc.status)}</TableCell>
+                  <TableCell>{doc.size}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
+
+// export default KnowledgeBaseSection;
+
+
+// export default KnowledgeBaseSection;
+
 
 // export default KnowledgeBaseSection;
 
