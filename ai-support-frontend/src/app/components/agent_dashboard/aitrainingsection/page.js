@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { Badge } from "../badge";
 import { Brain, Database, Zap, CheckCircle } from "lucide-react";
-import { Progress } from "../../ui/page";
+import { Progress } from "../../ui/progress";
 import Sidebar from "../sidebar/page";
 
 const AITrainingSection = () => {

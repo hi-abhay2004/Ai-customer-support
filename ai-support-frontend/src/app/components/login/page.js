@@ -145,7 +145,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
-const BASE_URL = "http://192.168.39.76:8000/support"; // Django backend IP
+const BASE_URL = "http://34.131.200.150/support"; // Django backend IP
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isRegistering, setIsRegistering] = useState(false);

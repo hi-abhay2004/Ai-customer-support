@@ -1,4 +1,5 @@
 // Feedback form for users
+"use client";
 import { useState } from "react";
 import { submitFeedback } from "../../lib/api";
 

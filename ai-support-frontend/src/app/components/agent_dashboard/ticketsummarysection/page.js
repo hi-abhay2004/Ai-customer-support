@@ -1,4 +1,5 @@
 // Ticket summary and copilot summary page for agents
+"use client";
 import { useState } from "react";
 import CopilotSummary from "../copilot_summary";
 

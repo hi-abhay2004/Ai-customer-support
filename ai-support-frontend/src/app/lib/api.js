@@ -12,7 +12,7 @@ export async function uploadFile(companyId, file) {
   return await res.json();
 }
 // Central API utility for all backend endpoints
-const BASE_URL = "http://192.168.39.76:8000/support";
+const BASE_URL = "http://34.131.200.150/support";
 
 // Helper to get token from localStorage
 export function getToken() {
@@ -93,5 +93,28 @@ export async function sendChatbotMessage({ query, company, user_email, image }) 
 export async function getChatMessages(ticketId) {
   const res = await fetch(`${BASE_URL}/chat-messages/?ticket=${ticketId}`, { headers: authHeaders() });
   if (!res.ok) throw new Error("Failed to fetch chat messages");
+  return await res.json();
+}
+
+
+// --- Feedback ---
+
+// --- Feedback ---
+
+export async function submitFeedback({ company, user_email, rating, comment }) {
+  const res = await fetch(`${BASE_URL}/feedback/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ company, user_email, rating, comment }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Feedback submit failed");
+  }
+
   return await res.json();
 }
