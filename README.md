@@ -8,9 +8,13 @@ A full-stack AI-driven customer support platform built in **72 hours** during a 
 ---
 
 ## 📸 Screenshots
+![WhatsApp Image 2025-07-19 at 14 32 42](https://github.com/user-attachments/assets/abe32b1a-68d6-42d5-96a7-29137b188c12)
+![WhatsApp Image 2025-07-19 at 14 32 44](https://github.com/user-attachments/assets/5af981ab-6d90-45ca-80a3-e3b935e34540)
+![WhatsApp Image 2025-07-19 at 14 32 44 (1)](https://github.com/user-attachments/assets/5537a34f-5b97-4d26-8636-5d3e7cde5059)
+![Wh![WhatsApp Image 2025-07-19 at 14 32 43 (1)](https://github.com/user-attachments/assets/50d2a5b8-bc42-4330-8413-0cf105386730)
+atsApp Image 2025-07-19 at 14 32 43](https://github.com/user-attachments/assets/a9cabd48-4a23-4e12-96fc-de9414c18898)
 
-![Dashboard Screenshot](./screenshots/dashboard.png) <!-- Replace with your actual path -->
-![Chatbot Screenshot](./screenshots/chatbot.png)
+
 
 ---
 
